@@ -71,5 +71,42 @@ export const API_CONFIG = {
         }
       }
     ]
+  },
+  wifiAccess: {
+    title: "Wifi Access",
+    actions: [
+      {
+        method: 'GET',
+        endpoint: '/wifi-access',
+        description: 'Retrieve all guest and vendor wifi credentials',
+        fields: ['vendor', 'number'], 
+        schema: {
+          "_id": "65f2d4e5f6a7b8c9d0e1f2a3",
+          "number": "string",
+          "password": "string",
+          "vendor": "string",
+          "startDate": "2026-03-10T15:00:00Z",
+          "endDate": "2026-03-17T15:00:00Z",
+          "duration": "7 days",
+          "createdAt": "2026-03-10T15:18:00Z",
+          "updatedAt": "2026-03-10T15:18:00Z",
+          "__v": 0
+        }
+      },
+      {
+        method: 'POST',
+        endpoint: '/wifi-access',
+        description: 'Generate new wifi access credentials',
+        fields: ['number', 'password', 'vendor', 'startDate', 'endDate', 'duration'],
+        schema: {
+          "number": "string",
+          "password": "string",
+          "vendor": "string",
+          "startDate": "string",
+          "endDate": "string",
+          "duration": "string"
+        }
+      }
+    ]
   }
 };
