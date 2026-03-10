@@ -16,7 +16,7 @@ function App() {
       color: '#fff', // Assuming you want to keep the dark theme from your screenshot
       minHeight: '100vh'
     }}>
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '30px' }}>API Dashboard</h1>
+      <h1 style={{ fontSize: '2.5rem', marginBottom: '30px' }}>Amelia Academy API Dashboard</h1>
       
       {Object.keys(API_CONFIG).map((resourceKey) => {
         const resource = API_CONFIG[resourceKey];
