@@ -9,7 +9,7 @@ import CopyJsonButton from './CopyJsonButton'; // Import it!
 function ApiSection({ id, config }) {
 
     const BASE_URL = 'https://amelia-backend-bf037be2cd8d.herokuapp.com'
-    const fullUrl = `${BASE_URL}${config.endpoint}`
+    let fullUrl = `${BASE_URL}${config.endpoint}`
 
     const [isOpen, setIsOpen] = useState(false);
     const [data, setData] = useState([]);
@@ -25,11 +25,11 @@ function ApiSection({ id, config }) {
 
     const handleFormSubmit = async (formData) => {
         let options = { method: config.method };
-        let url = `${BASE_URL}${config.endpoint}`;
+        // let url = `${BASE_URL}${config.endpoint}`;
         // If it's a GET, append params to URL
         if (config.method === 'GET') {
             const params = new URLSearchParams(formData).toString();
-            url = `${url}?${params}`;
+            fullUrl = `${fullUrl}?${params}`;
         } else {
             // If it's a POST/PUT, send JSON
             options.headers = { 'Content-Type': 'application/json' };
@@ -37,7 +37,7 @@ function ApiSection({ id, config }) {
         }
 
         try {
-            const response = await fetch(url, options);
+            const response = await fetch(fullUrl, options);
             const result = await response.json();
 
             // Update your table state!
@@ -55,36 +55,53 @@ function ApiSection({ id, config }) {
     };
 
     return (
-        <div style={{ marginBottom: '20px' }}>
-            {/* The Header Bar (Clickable) */}
+        <div style={{ marginBottom: '10px' }}>
+            {/* 1. The Main Header Bar */}
             <div 
-            onClick={() => setIsOpen(!isOpen)} 
-            style={{ 
+                onClick={() => setIsOpen(!isOpen)} 
+                style={{ 
                 display: 'flex', 
                 alignItems: 'center', 
-                width: '100%', // Crucial for full-width
+                width: '100%', 
                 padding: '8px', 
-                backgroundColor: config.method === 'GET' ? '#ebf3fb' : '#e8f6f0', // Light background for the bar
+                backgroundColor: config.method === 'GET' ? '#ebf3fb' : '#e8f6f0', 
                 border: `1px solid ${config.method === 'GET' ? '#61affe' : '#49cc90'}`,
                 borderRadius: '4px', 
-                cursor: 'pointer',
-                transition: 'background-color 0.2s'
-            }}
+                cursor: 'pointer'
+                }}
             >
-            <span style={{ 
+                {/* Method Badge */}
+                <span style={{ 
                 backgroundColor: config.method === 'GET' ? '#61affe' : '#49cc90', 
                 color: 'white', 
-                padding: '6px 12px', 
+                padding: '4px 10px', 
                 borderRadius: '4px', 
                 fontWeight: 'bold',
                 fontSize: '0.85rem',
-                minWidth: '80px',
-                textAlign: 'center',
                 marginRight: '15px'
-            }}>
+                }}>
                 {config.method}
-            </span>
-            <code style={{ fontWeight: '600', color: '#3b4151' }}>{fullUrl}</code>
+                </span>
+
+                {/* URL and Description (Flex-Grow pushes the arrow to the right) */}
+                <div style={{ flexGrow: 1, display: 'flex', alignItems: 'baseline', gap: '10px' }}>
+                <code style={{ fontWeight: '600', color: '#3b4151' }}>{fullUrl}</code>
+                <span style={{ color: '#555', fontSize: '0.85rem' }}>{config.description}</span>
+                </div>
+
+                {/* 2. THE ARROW ICON */}
+                <span style={{ 
+                fontSize: '1.2rem', 
+                color: '#3b4151', 
+                paddingRight: '10px',
+                fontWeight: 'bold',
+                userSelect: 'none', // Prevents highlighting the arrow text on click
+                // Optional: Add a smooth rotation transition
+                transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.2s ease-in-out'
+                }}>
+                ▼
+                </span>
             </div>
 
             {isOpen && (
