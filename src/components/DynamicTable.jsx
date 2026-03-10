@@ -6,7 +6,7 @@ function DynamicTable({ data }) {
   const headers = Object.keys(data[0]).filter(key => key !== '_id' && key !== '__v');
 
   return (
-    <table>
+    <table style={{ color: '#333', backgroundColor: '#fff', width: '100%' }}>
       <thead>
         <tr>
           {headers.map(header => <th key={header}>{header}</th>)}

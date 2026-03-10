@@ -13,6 +13,7 @@ function ApiSection({ id, config }) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [data, setData] = useState([]);
+    const [successMessage, setSuccessMessage] = useState("");
 
     // Helper to get color based on method
     const methodColors = {
@@ -24,33 +25,34 @@ function ApiSection({ id, config }) {
 
 
     const handleFormSubmit = async (formData) => {
-        let options = { method: config.method };
-        // let url = `${BASE_URL}${config.endpoint}`;
-        // If it's a GET, append params to URL
-        if (config.method === 'GET') {
-            const params = new URLSearchParams(formData).toString();
-            fullUrl = `${fullUrl}?${params}`;
-        } else {
-            // If it's a POST/PUT, send JSON
-            options.headers = { 'Content-Type': 'application/json' };
-            options.body = JSON.stringify(formData);
-        }
+        const isGet = config.method === 'GET';
+        const url = isGet 
+            ? `${fullUrl}?${new URLSearchParams(formData)}` 
+            : fullUrl;
+
+        const options = {
+            method: config.method,
+            headers: isGet ? {} : { 'Content-Type': 'application/json' },
+            body: isGet ? null : JSON.stringify(formData)
+        };
 
         try {
-            const response = await fetch(fullUrl, options);
+            const response = await fetch(url, options);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            
             const result = await response.json();
 
-            // Update your table state!
-            if (config.method === 'GET') {
-                // For GET, we assume the response is the new list to display
+            // Single logic gate for state updates
+            if (isGet) {
                 setData(result);
-                } else {
-                // For POST, we assume the response is the single new item created
-                setData([...data, result]);
+            } else {
+                setData(prev => [...prev, result]);
+                setSuccessMessage("The post to your database was successful!");
+                setTimeout(() => setSuccessMessage(""), 5000);
             }
         } catch (error) {
             console.error("API call failed:", error);
-            alert("Something went wrong with the request.");
+            alert("Request failed. Check console for details.");
         }
     };
 
@@ -150,10 +152,25 @@ function ApiSection({ id, config }) {
                     </div>
                 </>
                 )}
+                {successMessage && (
+                <div style={{
+                    marginTop: '20px',
+                    padding: '12px',
+                    backgroundColor: '#e8f6f0', // Light green background
+                    border: '1px solid #49cc90', // Strong green border
+                    borderRadius: '4px',
+                    color: '#1a5c3d',           // Dark green text for readability
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                    textAlign: 'center'
+                }}>
+                    ✓ {successMessage}
+                </div>
+                )}
                 {/* Only show table if we have data from a search/get */}
                 {data.length > 0 && (
                 <>
-                    <hr style={{ margin: '20px 0' }} />
+                    <hr style={{ margin: '20px 0', color: '#3b4151' }} />
                     <DynamicTable data={data} />
                 </>
                 )}

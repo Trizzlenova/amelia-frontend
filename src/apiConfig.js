@@ -1,4 +1,3 @@
-// src/apiConfig.js
 export const API_CONFIG = {
   appointments: {
     title: "Appointments",
@@ -24,12 +23,51 @@ export const API_CONFIG = {
         endpoint: '/appointments',
         description: 'Create a new appointment entry',
         fields: ['patient', 'status', 'appointmentType', 'reason', 'start', 'end', 'minutesDuration', 'comment', 'doctor'],
-        // POST schemas usually show the "Request Body"
         schema: {
             "patient": "string",
             "status": "string",
             "appointmentType": "string",
             "reason": "string"
+        }
+      }
+    ]
+  },
+  onboarding: {
+    title: "Onboarding",
+    actions: [
+      {
+        method: 'GET',
+        endpoint: '/onboarding',
+        description: 'Search and list all employee onboarding records',
+        fields: ['employeeName', 'typeOfEmployee'], 
+        schema: {
+          "_id": "65f1a2b3c4d5e6f7a8b9c0d1",
+          "employeeName": "string",
+          "ssn": "string",
+          "dob": "string",
+          "typeOfEmployee": "string",
+          "photo": "string (base64)",
+          "photoType": "string",
+          "email": "string",
+          "city": "string",
+          "createdAt": "2026-03-10T14:15:00.000Z",
+          "updatedAt": "2026-03-10T14:15:00.000Z",
+          "__v": 0
+        }
+      },
+      {
+        method: 'POST',
+        endpoint: '/onboarding',
+        description: 'Register a new employee into the onboarding system',
+        // These are the fields that will appear in your DynamicForm
+        fields: ['employeeName', 'ssn', 'dob', 'typeOfEmployee', 'email', 'city'],
+        schema: {
+          "employeeName": "string",
+          "ssn": "string",
+          "dob": "string",
+          "typeOfEmployee": "string",
+          "email": "string",
+          "city": "string"
         }
       }
     ]
