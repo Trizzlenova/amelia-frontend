@@ -9,6 +9,8 @@ import CopyJsonButton from './CopyJsonButton'; // Import it!
 function ApiSection({ id, config }) {
 
     const BASE_URL = 'https://amelia-backend-bf037be2cd8d.herokuapp.com'
+    const fullUrl = `${BASE_URL}${config.endpoint}`
+
     const [isOpen, setIsOpen] = useState(false);
     const [data, setData] = useState([]);
 
@@ -22,9 +24,8 @@ function ApiSection({ id, config }) {
 
 
     const handleFormSubmit = async (formData) => {
-        let url = `https://amelia-backend-bf037be2cd8d.herokuapp.com${config.endpoint}`;
         let options = { method: config.method };
-
+        let url = `${BASE_URL}${config.endpoint}`;
         // If it's a GET, append params to URL
         if (config.method === 'GET') {
             const params = new URLSearchParams(formData).toString();
@@ -41,11 +42,11 @@ function ApiSection({ id, config }) {
 
             // Update your table state!
             if (config.method === 'GET') {
-            // For GET, we assume the response is the new list to display
-            setData(result);
-            } else {
-            // For POST, we assume the response is the single new item created
-            setData([...data, result]);
+                // For GET, we assume the response is the new list to display
+                setData(result);
+                } else {
+                // For POST, we assume the response is the single new item created
+                setData([...data, result]);
             }
         } catch (error) {
             console.error("API call failed:", error);
@@ -54,62 +55,95 @@ function ApiSection({ id, config }) {
     };
 
     return (
-    <div style={{ marginBottom: '20px' }}>
-        {/* 1. Title Header (Outside the clickable box) */}
-        <h3 style={{ marginBottom: '5px' }}>{config.label}</h3>
-
-        {/* 2. The Clickable "Swagger" Bar */}
-        <div 
-    onClick={() => setIsOpen(!isOpen)} 
-    style={{ 
-        display: 'flex',          // This keeps everything in a row
-        alignItems: 'center',     // This centers them vertically
-        gap: '12px',              // This gives them breathing room
-        padding: '10px', 
-        backgroundColor: '#f7f7f7', 
-        cursor: 'pointer',
-        borderBottom: isOpen ? '1px solid #ddd' : 'none'
-    }}
-    >
-    {/* The Method Badge */}
-    <span style={{ 
-        backgroundColor: methodColors[config.method], 
-        color: 'white', 
-        padding: '4px 8px', 
-        borderRadius: '4px',
-        fontWeight: 'bold',
-        minWidth: '60px',
-        textAlign: 'center'
-    }}>
-        {config.method}
-    </span>
-
-    {/* The Full URL */}
-    <code style={{ fontSize: '1rem', fontWeight: '600', color: '#333' }}>
-        {BASE_URL}{config.endpoint}
-    </code>
-    
-    {/* The Description */}
-    <span style={{ color: '#666', fontSize: '0.9rem', marginLeft: 'auto' }}>
-        {config.description}
-    </span>
-    </div>
-
-      {/* 3. Collapsible Content */}
-      {isOpen && (
-        <div style={{ padding: '20px', border: '1px solid #ddd' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h4>Form Payload</h4>
-            <CopyJsonButton fields={config.fields} />
+        <div style={{ marginBottom: '20px' }}>
+            {/* The Header Bar (Clickable) */}
+            <div 
+            onClick={() => setIsOpen(!isOpen)} 
+            style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                width: '100%', // Crucial for full-width
+                padding: '8px', 
+                backgroundColor: config.method === 'GET' ? '#ebf3fb' : '#e8f6f0', // Light background for the bar
+                border: `1px solid ${config.method === 'GET' ? '#61affe' : '#49cc90'}`,
+                borderRadius: '4px', 
+                cursor: 'pointer',
+                transition: 'background-color 0.2s'
+            }}
+            >
+            <span style={{ 
+                backgroundColor: config.method === 'GET' ? '#61affe' : '#49cc90', 
+                color: 'white', 
+                padding: '6px 12px', 
+                borderRadius: '4px', 
+                fontWeight: 'bold',
+                fontSize: '0.85rem',
+                minWidth: '80px',
+                textAlign: 'center',
+                marginRight: '15px'
+            }}>
+                {config.method}
+            </span>
+            <code style={{ fontWeight: '600', color: '#3b4151' }}>{fullUrl}</code>
             </div>
-            
-            <DynamicForm fields={config.fields} onSubmit={handleFormSubmit} />
-            <hr />
-            <DynamicTable data={data} />
+
+            {isOpen && (
+            <div style={{ padding: '20px', border: '1px solid #ddd', borderTop: 'none', backgroundColor: '#fafafa' }}>
+                
+                {/* Header Row: Description and External Link */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+                <p style={{ margin: 0, color: '#3b4151' }}>{config.description}</p>
+                
+                {/* Link to actual live JSON on Heroku */}
+                <div style={{ textAlign: 'right' }}>
+                    <a href={fullUrl} target="_blank" rel="noreferrer" style={{ 
+                    color: '#4990e2', fontSize: '0.9rem', textDecoration: 'none', fontWeight: 'bold' 
+                    }}>
+                    View Live JSON ↗
+                    </a>
+                </div>
+                </div>
+
+                {/* Conditional Schema Block: Only shows for GET */}
+                {config.method === 'GET' && config.schema && (
+                <div style={{ marginBottom: '20px' }}>
+                    <div style={{ fontSize: '0.85rem', marginBottom: '10px' }}>
+                    {/* <span style={{ fontWeight: 'bold', borderBottom: '2px solid #3b4151', paddingBottom: '2px' }}>Example Value</span> */}
+                    <span style={{ color: '#3b4151' }}>Example Schema</span>
+                    </div>
+                    <pre style={{ 
+                    backgroundColor: '#333', color: '#fff', padding: '20px', borderRadius: '4px', 
+                    overflowX: 'auto', fontSize: '0.9rem' 
+                    }}>
+                    <code>{JSON.stringify(config.schema, null, 2)}</code>
+                    </pre>
+                </div>
+                )}
+
+                {/* 2. Hide Parameters and Form IF the method is GET */}
+                {config.method !== 'GET' && (
+                <>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px' }}>
+                    <h4 style={{ margin: 0, color: '#3b4151' }}>Parameters</h4>
+                    {config.method === 'POST' && <CopyJsonButton fields={config.fields} />}
+                    </div>
+                    
+                    <div style={{ marginTop: '15px' }}>
+                    <DynamicForm fields={config.fields} onSubmit={handleFormSubmit} />
+                    </div>
+                </>
+                )}
+                {/* Only show table if we have data from a search/get */}
+                {data.length > 0 && (
+                <>
+                    <hr style={{ margin: '20px 0' }} />
+                    <DynamicTable data={data} />
+                </>
+                )}
+            </div>
+            )}
         </div>
-      )}
-    </div>
-  );
+    );
 }
 
 export default ApiSection;
