@@ -21,7 +21,16 @@ function ApiSection({ config }) {
     const isDelete = config.method === 'DELETE';
     const isPut = config.method === 'PUT';
 
-    const url = isGet ? `${fullUrl}?${new URLSearchParams(formData)}` : fullUrl;
+    let url = fullUrl;
+
+    if (config.isPathParams) {
+        Object.keys(formData).forEach(key => {
+            url = url.replace(`:${key}`, formData[key]);
+        });
+    } else if (isGet) {
+        // Standard GET with Query Params (?reason=text)
+        url = `${fullUrl}?${new URLSearchParams(formData)}`;
+    }
     
     const options = {
       method: config.method,
@@ -33,9 +42,17 @@ function ApiSection({ config }) {
         const response = await fetch(url, options);
         const result = await response.json();
 
-        if (response.ok) {
+        if (response.ok && !result.error) {
             if (isGet) {
-                setData(result);
+                const keys = Object.keys(result);
+                let actualData = result;
+
+                if (keys.length === 2 && keys.includes('error')) {
+                    const dataKey = keys.find(k => k !== 'error');
+                    actualData = result[dataKey];
+                } 
+    
+                setData(Array.isArray(actualData) ? actualData : [actualData]);
             } else if (isDelete) {
                 setData([]);
                 setSuccessMessage("User database cleared.");
@@ -46,8 +63,8 @@ function ApiSection({ config }) {
                 setSuccessMessage("User created successfully!");
             }
         } else {
-            console.error("Update Forbidden:", result);
-            alert(`Error: ${result.result || "Action forbidden"}`);
+            const errorMessage = result.error || "Update failed. Please check your inputs.";
+            alert(`Backend Error: ${errorMessage}`);
         }
         setTimeout(() => setSuccessMessage(""), 5000);
     } catch (e) {
@@ -109,7 +126,7 @@ function ApiSection({ config }) {
                 </div>
                 
                 <div style={{ marginTop: '15px' }}>
-                <DynamicForm fields={config.fields} onSubmit={handleFormSubmit} />
+                    <DynamicForm fields={config.fields} onSubmit={handleFormSubmit} />
                 </div>
             </>
             )}
