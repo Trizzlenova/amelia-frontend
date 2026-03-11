@@ -78,13 +78,13 @@ export const API_CONFIG = {
       {
         method: 'GET',
         endpoint: '/',
-        description: 'Fetch all registered users and their account status',
+        description: 'Fetch all registered users',
         fields: ['name', 'email', 'role'], 
         schema: {
           "_id": "65f3a1b2c3d4e5f6a7b8c9d0",
           "name": "string",
           "email": "user@example.com",
-          "password": "hashed_password",
+          "password": "password",
           "role": "Member",
           "phoneNumber": "123-867-5309",
           "pastDue": "true",
