@@ -7,8 +7,8 @@ import CopyJsonButton from './CopyJsonButton';
 
 // url: https://amelia-backend-bf037be2cd8d.herokuapp.com${config.endpoint}
 
-const methodColors = { GET: '#61affe', POST: '#49cc90', DELETE: '#f93e3e' };
-const methodLightColors = { GET: '#ebf3fb', POST: '#e8f6f0', DELETE: '#fff0f0' };
+const methodColors = { GET: '#61affe', POST: '#49cc90', PUT: '#fca130', DELETE: '#f93e3e' };
+const methodLightColors = { GET: '#ebf3fb', POST: '#e8f6f0', PUT: '#fff7e6', DELETE: '#fff0f0' };
 
 function ApiSection({ config }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,6 +19,8 @@ function ApiSection({ config }) {
   const handleFormSubmit = async (formData) => {
     const isGet = config.method === 'GET';
     const isDelete = config.method === 'DELETE';
+    const isPut = config.method === 'PUT';
+
     const url = isGet ? `${fullUrl}?${new URLSearchParams(formData)}` : fullUrl;
     
     const options = {
@@ -28,18 +30,29 @@ function ApiSection({ config }) {
     };
 
     try {
-      const response = await fetch(url, options);
-      const result = await response.json();
-      if (isGet) setData(result);
-      else if (isDelete) {
-        setData([]);
-        setSuccessMessage("The database was cleared successfully.");
-      } else {
-        setData(prev => [...prev, result]);
-        setSuccessMessage("Post successful!");
-      }
-      setTimeout(() => setSuccessMessage(""), 5000);
-    } catch (e) { console.error(e); }
+        const response = await fetch(url, options);
+        const result = await response.json();
+
+        if (response.ok) {
+            if (isGet) {
+                setData(result);
+            } else if (isDelete) {
+                setData([]);
+                setSuccessMessage("User database cleared.");
+            } else if (isPut) {
+                setSuccessMessage(result.result || "Update successful!");
+            } else {
+                setData(prev => [...prev, result]);
+                setSuccessMessage("User created successfully!");
+            }
+        } else {
+            console.error("Update Forbidden:", result);
+            alert(`Error: ${result.result || "Action forbidden"}`);
+        }
+        setTimeout(() => setSuccessMessage(""), 5000);
+    } catch (e) {
+        console.error("API Error:", e);
+    }
   };
 
   return (
@@ -58,6 +71,8 @@ function ApiSection({ config }) {
                     </a>
                 </div>
             </div>
+          
+          {/* GET */}
           {config.method === 'GET' && config.schema && (
                 <div style={{ marginBottom: '20px' }}>
                     <div style={{ fontSize: '0.85rem', marginBottom: '10px' }}>
@@ -73,6 +88,7 @@ function ApiSection({ config }) {
                 </div>
             )}
 
+          {/* POST */}
           {config.method === 'POST' && (
             <>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', color: '#3b4151' }}>
@@ -83,6 +99,22 @@ function ApiSection({ config }) {
             </>
           )}
 
+
+
+          {/* PUT */}
+          {config.method === 'PUT' && (
+            <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <h4 style={{ color: '#3b4151', margin: 0 }}>Parameters</h4>
+                </div>
+                
+                <div style={{ marginTop: '15px' }}>
+                <DynamicForm fields={config.fields} onSubmit={handleFormSubmit} />
+                </div>
+            </>
+            )}
+          
+          {/* DELETE */}
           {config.method === 'DELETE' && <DangerZone endpoint={config.trueEndpoint} onConfirm={() => handleFormSubmit({})} />}
 
           {successMessage && <div style={{ marginTop: '10px', color: '#1a5c3d', backgroundColor: '#e8f6f0', padding: '10px', borderRadius: '4px' }}>✓ {successMessage}</div>}

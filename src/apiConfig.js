@@ -72,6 +72,64 @@ export const API_CONFIG = {
       }
     ]
   },
+  users: {
+    title: "User Management",
+    actions: [
+      {
+        method: 'GET',
+        endpoint: '/',
+        description: 'Fetch all registered users and their account status',
+        fields: ['name', 'email', 'role'], 
+        schema: {
+          "_id": "65f3a1b2c3d4e5f6a7b8c9d0",
+          "name": "string",
+          "email": "user@example.com",
+          "password": "hashed_password",
+          "role": "Member",
+          "phoneNumber": "123-867-5309",
+          "pastDue": "true",
+          "disconnected": "true",
+          "createdAt": "2026-03-11T10:00:00Z",
+          "updatedAt": "2026-03-11T10:00:00Z",
+          "__v": 0
+        }
+      },
+      {
+        method: 'POST',
+        endpoint: '/',
+        description: 'Register a new user to the platform',
+        fields: ['name', 'email', 'password', 'role', 'phoneNumber'],
+        schema: {
+          "name": "string",
+          "email": "string",
+          "password": "string",
+          "role": "string"
+        }
+      },
+      {
+        method: 'PUT',
+        endpoint: '/',
+        description: 'Update user password via phone number or email',
+        fields: ['email', 'phoneNumber', 'password'],
+        schema: {
+            "phoneNumber": "string",
+            "email": "string",
+            "password": "new_password_string",
+        }
+      },
+      {
+        method: 'DELETE',
+        endpoint: '/clean-users',
+        trueEndpoint: '/',
+        description: 'DANGER: Wipe all users from the database',
+        fields: [],
+        schema: {
+          "message": "User database cleared",
+          "count": 0
+        }
+      }
+    ]
+  },
   wifiAccess: {
     title: "Wifi Access",
     actions: [
