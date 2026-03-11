@@ -273,6 +273,87 @@ export const API_CONFIG = {
       }
     ]
   },
+  reservations: {
+    title: "Reservations",
+    actions: [
+      {
+        method: 'GET',
+        endpoint: '/reservations',
+        description: 'Retrieve all hotel reservations',
+        fields: ['hotel_name', 'status'],
+        schema: {
+          "_id": "65f9a1b2",
+          "hotel_name": "Grand Plaza",
+          "guest": { "name": "John Doe", "email": "john@example.com" },
+          "rooms": ["101", "102"],
+          "total_amount": 299.99,
+          "status": "Booked"
+        }
+      },
+      {
+        method: 'GET',
+        endpoint: '/reservations/:email',
+        description: 'Search reservations by Guest Email',
+        fields: ['email'],
+        isPathParams: true,
+        // Backend returns the raw array here, no nesting key
+      },
+      {
+        method: 'POST',
+        endpoint: '/reservations',
+        description: 'Create a new reservation with guest details',
+        // We include guest fields so the form generates them
+        fields: ['hotel_name', 'total_amount', 'status', 'first_name', 'last_name', 'email', 'check_in', 'check_out']
+      },
+      {
+        method: 'PUT',
+        endpoint: '/reservations/:id',
+        description: 'Update reservation or guest info by ID',
+        fields: ['id', 'status', 'first_name', 'last_name', 'check_in', 'check_out'],
+        isPathParams: true
+      }
+    ]
+  },
+  roomService: {
+    title: "Room Service",
+    actions: [
+      {
+        method: 'GET',
+        endpoint: '/room_service',
+        description: 'View all active room service orders',
+        fields: ['room_number', 'guest'],
+        schema: {
+          "_id": "65fa2b3c",
+          "room_number": 305,
+          "guest": "mhowey",
+          "items": ["Club Sandwich", "Orange Juice"],
+          "total_amount": 45.50,
+          "currency": "USD"
+        }
+      },
+      {
+        method: 'GET',
+        endpoint: '/room_service/:guest',
+        description: 'Search room service orders by Guest Name',
+        fields: ['guest'],
+        isPathParams: true
+      },
+      {
+        method: 'POST',
+        endpoint: '/room_service',
+        description: 'Place a new room service order',
+        fields: ['room_number', 'guest', 'items', 'total_amount', 'currency']
+      },
+      {
+        method: 'PUT',
+        endpoint: '/room_service/:id',
+        description: 'Update order details by ID',
+        fields: ['id', 'items', 'total_amount', 'currency'],
+        isPathParams: true,
+        schema: { "result": "The post to your database was successful" }
+      }
+    ]
+  },
   users: {
     title: "User Management",
     actions: [
@@ -375,6 +456,56 @@ export const API_CONFIG = {
           "message": "All wifi records have been successfully cleared",
           "count": 0
         }
+      }
+    ]
+  },
+  wifiAdvanced: {
+    title: "Wifi Access (Advanced)",
+    actions: [
+      {
+        method: 'GET',
+        endpoint: '/wifi-access-advanced',
+        description: 'Manage complex vendor wifi credentials with visitor lists',
+        fields: ['vendor', 'number'],
+        schema: {
+          "number": 4,
+          "vendor": "soundhound",
+          "visitors": {
+            "guests": ["Eric", "Sarah"],
+            "passwords": ["abc", "def"]
+          }
+        }
+      },
+      {
+        method: 'POST',
+        endpoint: '/wifi-access-advanced',
+        description: 'Create advanced wifi record. Note: Enter guests/passwords as JSON arrays, e.g., ["Name"]',
+        fields: ['number', 'vendor', 'startDate', 'endDate', 'duration', 'visitors.guests', 'visitors.passwords']
+      }
+    ]
+  },
+  wildfire: {
+    title: "Wildfire Policy Management",
+    actions: [
+      {
+        method: 'GET',
+        endpoint: '/wildfire',
+        description: 'View wildfire insurance policies and emergency contacts',
+        fields: ['policyNumber', 'address'],
+        schema: {
+          "_id": "65fbc1d2e3a4b5c6d7e8f9a0",
+          "contacts": "John Doe: 555-0199",
+          "policyNumber": "WF-992834",
+          "address": "123 Canyon Road, CA",
+          "policyDate": "2026-05-20",
+          "createdAt": "2026-03-11T16:00:00Z"
+        }
+      },
+      {
+        method: 'POST',
+        endpoint: '/wildfire',
+        description: 'Register a new wildfire protection policy',
+        fields: ['contacts', 'policyNumber', 'address', 'policyDate']
       }
     ]
   }

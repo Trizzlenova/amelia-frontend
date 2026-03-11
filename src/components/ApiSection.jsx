@@ -31,6 +31,28 @@ function ApiSection({ config }) {
         // Standard GET with Query Params (?reason=text)
         url = `${fullUrl}?${new URLSearchParams(formData)}`;
     }
+
+    let payload = { ...formData };
+
+    Object.keys(formData).forEach(key => {
+        if (key.includes('.')) {
+            const [parent, child] = key.split('.');
+            if (!payload[parent]) payload[parent] = {};
+            payload[parent][child] = formData[key];
+        } else {
+            payload[key] = formData[key];
+        }
+    });
+
+    if (payload.visitors) {
+        ['guests', 'passwords'].forEach(key => {
+            let val = payload.visitors[key];
+            // If it's not already a JSON string (starting with [), wrap it
+            if (typeof val === 'string' && !val.trim().startsWith('[')) {
+                payload.visitors[key] = JSON.stringify(val.split(',').map(s => s.trim()));
+            }
+        });
+    }
     
     const options = {
       method: config.method,

@@ -28,7 +28,12 @@ function DynamicForm({ fields, onSubmit }) {
           </label>
           <input
             name={field}
-            type={field.toLowerCase().includes('date') ? 'date' : field.toLowerCase().includes('time') ? 'time' : 'text'}
+            type={
+              field.toLowerCase().includes('date') ? 'date' : 
+              field.toLowerCase().includes('time') ? 'time' : 
+              field.toLowerCase().includes('password') ? 'password' : 
+              field.toLowerCase().includes('email') ? 'email' : 'text'
+            }
             value={formData[field] || ''}
             onChange={handleChange}
             placeholder={field}
