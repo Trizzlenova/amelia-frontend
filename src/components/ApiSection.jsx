@@ -14,6 +14,7 @@ function ApiSection({ config }) {
   const [isOpen, setIsOpen] = useState(false);
   const [data, setData] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
+
   const fullUrl = `https://amelia-backend-bf037be2cd8d.herokuapp.com${config.endpoint}`;
 
   const handleFormSubmit = async (formData) => {
