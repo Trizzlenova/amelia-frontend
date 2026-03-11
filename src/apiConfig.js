@@ -29,7 +29,7 @@ export const API_CONFIG = {
             "appointmentType": "string",
             "reason": "string"
         }
-      }
+      },
     ]
   },
   onboarding: {
@@ -105,6 +105,16 @@ export const API_CONFIG = {
           "startDate": "string",
           "endDate": "string",
           "duration": "string"
+        }
+      },
+      {
+        method: 'DELETE',
+        endpoint: '/clean-wifi', 
+        trueEndpoint: '/wifi-access',
+        description: 'DANGER: Permanently delete all wifi access records from the database.',
+        schema: {
+          "message": "All wifi records have been successfully cleared",
+          "count": 0
         }
       }
     ]

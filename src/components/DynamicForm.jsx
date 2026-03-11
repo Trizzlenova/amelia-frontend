@@ -10,7 +10,7 @@ function DynamicForm({ fields, onSubmit }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);
-    setFormData({}); // Clear form after submit
+    setFormData({}); 
   };
 
   return (
@@ -20,7 +20,7 @@ function DynamicForm({ fields, onSubmit }) {
           <label style={{ 
             fontSize: '0.85rem', 
             fontWeight: 'bold', 
-            color: '#3b4151', // Dark grey/blue label
+            color: '#3b4151',
             marginBottom: '5px',
             textTransform: 'capitalize'
           }}>
@@ -34,9 +34,9 @@ function DynamicForm({ fields, onSubmit }) {
             style={{
               padding: '10px',
               borderRadius: '4px',
-              border: '1px solid #d8d8d8', // Professional light border
-              backgroundColor: '#fff',      // Force white background
-              color: '#333',                // Force dark text
+              border: '1px solid #d8d8d8',
+              backgroundColor: '#fff',      
+              color: '#333',                
               fontSize: '1rem'
             }}
           />

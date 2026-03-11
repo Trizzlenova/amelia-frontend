@@ -17,7 +17,7 @@ function App() {
 
   return (
     <div style={{ 
-      width: '100%', maxWidth: '1000px', margin: '0 auto', padding: '40px 20px',
+      width: '100%', maxWidth: '1200px', margin: '0 auto', padding: '40px 20px',
       color: '#fff', minHeight: '100vh', fontFamily: 'Inter, sans-serif'
     }}>
       <h1 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>Amelia Academy API Dashboard</h1>
