@@ -2,14 +2,21 @@ import { useState, useEffect } from 'react';
 
 // components
 import { API_CONFIG } from './apiConfig';
-import ApiSection from './components/ApiSection'
+import ApiSection from './components/ApiSection';
+import Login from './components/Login';
 import Filter from './components/Filter';
 
 // test url: fetch('https://amelia-backend-bf037be2cd8d.herokuapp.com/appointments/')
 
 function App() {
+  const [user, setUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [copied, setCopied] = useState(false);
+
+  // !user => Login page
+  if (!user) {
+    return <Login onLoginSuccess={(userData) => setUser(userData)} />;
+  }
 
   // Logic to filter the keys
   const filteredResourceKeys = Object.keys(API_CONFIG).filter((key) =>
@@ -27,11 +34,48 @@ function App() {
   };
 
   return (
-    <div style={{ 
-      width: '100%', maxWidth: '1200px', margin: '0 auto', padding: '40px 20px',
-      color: '#fff', minHeight: '100vh', fontFamily: 'Inter, sans-serif'
-    }}>
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>Amelia Academy API Dashboard</h1>
+      <div style={{ 
+        width: '100%', maxWidth: '1200px', margin: '0 auto', padding: '40px 20px',
+        color: '#fff', minHeight: '100vh', fontFamily: 'Inter, sans-serif'
+      }}>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'flex-start', 
+        marginBottom: '30px' 
+      }}>
+        <div>
+          <h1 style={{ fontSize: '2.5rem', margin: 0 }}>Amelia Academy API Dashboard</h1>
+          {/* Shows the email of the user we set during loginSuccess */}
+          <p style={{ color: '#888', marginTop: '8px', fontSize: '0.9rem' }}>
+            Logged in as: <span style={{ color: '#a566e4' }}>{user?.email || 'Admin'}</span>
+          </p>
+        </div>
+
+        <button 
+          onClick={() => setUser(null)} 
+          style={{
+            padding: '10px 20px',
+            backgroundColor: 'transparent',
+            color: '#ff4d4d',
+            border: '1px solid #ff4d4d',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: 'bold',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = '#ff4d4d';
+            e.target.style.color = '#fff';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = 'transparent';
+            e.target.style.color = '#ff4d4d';
+          }}
+        >
+          Logout
+        </button>
+      </div>
       
       {/* Render the Filter Component */}
       <Filter 
